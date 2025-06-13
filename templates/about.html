@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About RescueBoX</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
+        }
+        .dark-theme {
+            background-color: #343a40;
+            color: white;
+        }
+        .light-theme {
+            background-color: #f8f9fa;
+            color: black;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <h1>About RescueBoX</h1>
+        <p>RescueBoX is a chatbot designed to assist users with various tasks and provide helpful information.</p>
+    </div>
+    <script>
+        // Apply the saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.className = savedTheme + '-theme';
+    </script>
+</body>
+</html>

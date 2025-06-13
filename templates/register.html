@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block styles %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindMint AI</title>
+  <link rel="icon" href="favicon.ico" sizes="16x16" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="manifest" href="/static/site.webmanifest">
+</head>
+<style>
+  body {
+    background-color: #2c3e50; 
+    font-family: 'Arial', sans-serif; 
+  }
+  .register-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .card {
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
+  }
+  .card-header {
+    background-color: #2980b9; /* A different shade of blue */
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px 0; /* More padding for the header */
+  }
+  .card-body {
+    padding: 30px;
+    background-color: #ecf0f1; /* Lighter background for the body */
+    border-radius: 5px;
+
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+  input[type=text], input[type=password] {
+    border-radius: 4px;
+    border: 1px solid #bdc3c7;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  button[type=submit] {
+    background-color: #27ae60; /* A fresh green for the button */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+  button[type=submit]:hover {
+    background-color: #2ecc71; /* A lighter green on hover */
+  }
+  .alert-danger {
+    background-color: #e74c3c; /* Stronger color for alerts */
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #d35400;
+    border-radius: 4px;
+  }
+  .website-name {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 24px;
+    color: white; /* Make website name white */
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="website-name">
+  <img src="/static/logo.png" alt="Logo" style="height: 200px; vertical-align: middle;">
+</div>
+
+<div class="register-container">
+  <div class="card">
+    <div class="card-header">Sign Up!</div>
+    <div class="card-body">
+      {% if error_message %}
+        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password1">Password</label>
+          <input type="password" class="form-control" id="password1" name="password1" required>
+        </div>
+        <div class="form-group">
+          <label for="password2">Confirm Password</label>
+          <input type="password" class="form-control" id="password2" name="password2" required>
+        </div>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

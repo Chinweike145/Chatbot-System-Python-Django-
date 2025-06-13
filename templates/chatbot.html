@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMint AI</title>
+    <link rel="icon" href="favicon.ico" sizes="16x16" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+</head>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            height: 100vh;
+        }
+        .chat-container {
+            display: flex;
+            width: 100%;
+        }
+        .chat-history {
+            flex-basis: 25%;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        .chat-history h3 {
+            margin-bottom: 15px;
+        }
+        .chat-history ul {
+            list-style: none;
+            padding: 0;
+        }
+        .chat-history li {
+            margin-bottom: 10px;
+        }
+        .chat-history li span {
+            display: block;
+            background: #343a40;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .chat-history li span:hover {
+            background: #495057;
+        }
+        .new-chat-btn {
+            width: 100%;
+            background: #198754;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .chat {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 75%; /* Limit message width */
+            background-color: #343a40;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #495057;
+            color: #fff;
+            padding: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logout-btn {
+            background-color: #dc3545; /* Bootstrap btn-danger color */
+            color: white;
+            border: none;
+            padding: 7px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .messages-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .messages-list {
+            list-style: none;
+            padding: 0;
+        }
+        .message {
+            margin-bottom: 15px;
+            word-wrap: break-word;
+        }
+        .message.sent {
+            text-align: right;
+        }
+        .message .message-text {
+            display: inline-block;
+            max-width: 70%; /* Limits the width of the message */
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            overflow-wrap: break-word; /* Ensures words wrap */
+            word-break: break-word; /* Breaks unbroken text */
+        }
+        .message.sent .message-text {
+            background-color: #198754;
+            color: white;
+        }
+        .message.received .message-text {
+            background-color: #f8f9fa;
+            color: black;
+        }
+        .message-form {
+            display: flex;
+            padding: 15px;
+            border-top: 2px solid #343a40;
+        }
+        .message-input {
+            flex: 1;
+            border-radius: 5px;
+            border: 1px solid #343a40;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .btn-send {
+            border-radius: 5px;
+            background-color: #198754;
+            color: #fff;
+            border: none;
+            padding: 7px 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .loading {
+            display: inline-block;
+            max-width: 20%; /* Limits the width of the message */
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            overflow-wrap: break-word; /* Ensures words wrap */
+            word-break: break-word; /* Breaks unbroken text */
+            background-color: #f8f9fa;
+            color: #0b0c0c;
+            font-style: italic;
+            display: none; /* Initially hidden */
+        }
+    </style>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar for team members -->
+        <div class="chat-history">
+            <h3>Team Members</h3>
+            <ul id="team-members-list">
+                <li><span>Ogbonna C.C - Roll No: 92100151004</span></li>
+                <li><span>Evarist Joseph - Roll No: 92100151022</span></li>
+                <li><span>Olaoye Leke - Roll No: 92100151025</span></li>
+            </ul>
+        </div>
+
+        <!-- Main Chat Section -->
+        <div class="chat">
+            <div class="card-header">
+                MindMint AI
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+            <div class="card-body messages-box">
+                <ul class="list-unstyled messages-list" id="messages-list">
+                    {% for chat in chats %}
+                        {% if chat.user == request.user %}
+                            <li class="message sent">
+                                <div class="message-text">
+                                    <div class="message-sender">
+                                    </div>
+                                    <div class="message-content">
+                                        {{ chat.message }}
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="message received">
+                                <div class="message-text">
+                                    <div class="message-sender">
+                                    </div>
+                                    <div class="message-content">
+                                        {{ chat.response }}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <div id="loading-message" class="loading">Generating response...</div>
+            </div>
+            <form class="message-form" onsubmit="sendMessage(event)">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <input type="text" id="message-input" class="message-input" placeholder="Type your message...">
+                <button type="submit" class="btn btn-primary btn-send">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const messagesList = document.querySelector('.messages-list');
+        const messageForm = document.querySelector('.message-form');
+        const messageInput = document.querySelector('.message-input');
+
+        messageForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const message = messageInput.value.trim();
+            if (message.length === 0) {
+                return;
+            }
+
+            const messageItem = document.createElement('li');
+            messageItem.classList.add('message', 'sent');
+            const messageText = document.createElement('span');
+            messageText.classList.add('message-text');
+            messageText.textContent = message;
+            messageItem.appendChild(messageText);
+            messagesList.appendChild(messageItem);
+
+            messageInput.value = '';
+
+            // Show loading message
+            const loadingMessage = document.getElementById('loading-message');
+            loadingMessage.style.display = 'block';
+
+            try {
+                const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+                const response = await fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: new URLSearchParams({
+                        'csrfmiddlewaretoken': csrfToken,
+                        'message': message
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage(data.response, false);
+                } else {
+                    addMessage('Error sending message. Please try again.', false);
+                }
+            } catch (error) {
+                addMessage('An error occurred while connecting to the server.', false);
+            } finally {
+                // Hide loading message
+                loadingMessage.style.display = 'none';
+            }
+        });
+
+        function addMessage(text, isUser) {
+            const messageItem = document.createElement('li');
+            messageItem.classList.add('message', isUser ? 'sent' : 'received');
+            const messageText = document.createElement('span');
+            messageText.classList.add('message-text');
+            messageText.textContent = text;
+            messageItem.appendChild(messageText);
+            messagesList.appendChild(messageItem);
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+    </script>
+</body>
+</html>
